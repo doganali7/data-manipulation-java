@@ -1,0 +1,6 @@
+1234,John Doe                      ,1.12,CMPE,TT001
+6221,Jane White                    ,2.12,CMPE,TT002
+9821,Tom Jennings                  ,1.93,CMPE,TT003
+6235,Kim Blue                      ,1.85,CMPE,TT001
+1235,Bart Simpson                  ,2.01,CMPE,TT002
+3451,Alice Wonderland              ,2.37,CMPE,TT003
