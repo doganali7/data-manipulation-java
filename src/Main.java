@@ -4,21 +4,46 @@ import java.util.Arrays;
 public class Main {
     public static void main(String[] args) throws IOException {
 //        addStudent(1233,"asdasd Ali", 3.44f, "comp", "aa110");
-        modifyStudent(1235, "cgpa", "4.99");
+//        modifyStudent(1235, "cgpa", "4.99");
+//        deleteStudent(6221);
     }
+
+
     public static void addStudent (Integer id,String name,Float cgpa,String department,String instructorId) throws IOException {
         File studentFile = new File("students.txt");
         RandomAccessFile randomAccessFile = new RandomAccessFile(studentFile, "rw");
         randomAccessFile.seek(randomAccessFile.length());
-//        FileWriter fileWriter = new FileWriter(studentFile);
-//        PrintWriter printWriter = new PrintWriter(fileWriter);
+
         String addedUser = String.format("%4s,%-30s,%4.2f,%4s,%5s\n", String.valueOf(id), name, cgpa, department, instructorId);
         byte[] addedUserByte =  addedUser.getBytes("UTF-8");
+
         randomAccessFile.write(addedUserByte);
         randomAccessFile.close();
-//        printWriter.printf("%4s,%-30s,%4.2f,%4s,%5s\n", String.valueOf(id), name, cgpa, department, instructorId);
-//        printWriter.close();
-//        fileWriter.close();
+    }
+
+    public static void deleteStudent (Integer id) throws IOException{
+        File studentFile = new File("students.txt");
+        File tmpStudentFile = new File("tmpStudents.txt");
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(studentFile));
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(tmpStudentFile));
+
+        String line;
+        String newLineSym = System.getProperty("line.separator");
+        String currentNo;
+        while((line = bufferedReader.readLine()) != null){
+            currentNo = line.substring(0,4);
+            if(!Integer.valueOf(currentNo).equals(id)){
+                bufferedWriter.write(line + newLineSym);
+            }
+        }
+        bufferedReader.close();
+        bufferedWriter.close();
+
+        if (!studentFile.delete())
+            System.out.println("Failed to delete the original file.");
+        if (!tmpStudentFile.renameTo(studentFile))
+            System.out.println("Failed to rename the temporary file.");
     }
 
     public static void modifyStudent (Integer id, String attribute, String newValue) throws IOException {
@@ -68,5 +93,4 @@ public class Main {
             }
         }
     }
-
 }
