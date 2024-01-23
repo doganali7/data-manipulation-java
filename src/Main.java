@@ -3,12 +3,77 @@ import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-//         addStudent(1233,"asdasd Ali", 3.44f, "comp", "aa110");
-//         modifyStudent(1235, "cgpa", "4.99");
-//         deleteStudent(6221);
-//        advisorListOfInstructor("TT001");
+        // addStudent(1233,"asdasd Ali", 1.44, "comp", "aa110");
+        // modifyStudent(1235, "cgpa", "4.99");
+        // deleteStudent(6221);
+        // advisorListOfInstructor("TT001");
+        // displayStudent("allWithAdvisors", null);
+        // newFileForAdvisor("TT001");
     }
 
+    public static void displayStudent(String displayingOption, Integer studentId) throws IOException {
+        File studentFile = new File("students.txt");
+        FileReader studentFileReader = new FileReader(studentFile);
+        BufferedReader studentBufferedReader = new BufferedReader(studentFileReader);
+        String studentLine;
+
+        while ((studentLine = studentBufferedReader.readLine()) != null) {
+            String[] studentInfo = studentLine.split(",");
+            String advisorId = studentInfo[4].trim();
+            
+            switch (displayingOption) {
+                case "all":
+                    System.out.println(Arrays.toString(studentInfo));
+                    break;
+                case "allWithAdvisors":
+                case "specific":
+                    if (displayingOption.equals("specific") && !studentId.toString().equals(studentInfo[0].trim())) {
+                        continue;
+                    }
+                    File instructorFile = new File("instructors.txt");
+                    BufferedReader instructorReader = new BufferedReader(new FileReader(instructorFile));
+                    String instructorLine;
+
+                    while ((instructorLine = instructorReader.readLine()) != null) {
+                        String[] instructorInfo = instructorLine.split(",");
+                        if (advisorId.equals(instructorInfo[0].trim())) {
+                            System.out.println("Student: " + Arrays.toString(studentInfo) + "\nAdvisor: " + Arrays.toString(instructorInfo));
+                            break;
+                        }
+                    }
+                        instructorReader.close();
+                    break;
+                default:
+                    System.out.println("Invalid option");
+                    break;
+            }
+        }
+        studentBufferedReader.close();
+    }
+
+    public static void newFileForAdvisor(String advisorCode) throws IOException {
+        File instructorFile = new File("instructors.txt");
+        File specificInstructor = new File(advisorCode + ".txt");
+
+        FileReader fileReader = new FileReader(instructorFile);
+        FileWriter fileWriter = new FileWriter(specificInstructor);
+
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+        String line;
+        String newLineSym = System.getProperty("line.separator");
+        String currentCode;
+
+        while ((line = bufferedReader.readLine()) != null) {
+            currentCode = line.substring(0, 5);
+            if (String.valueOf(currentCode).equals(advisorCode)) {
+                bufferedWriter.write(line + newLineSym);
+            }
+        }
+        bufferedReader.close();
+        bufferedWriter.close();
+    }
 
     public static void addStudent(Integer id, String name, Float cgpa, String department, String instructorId)
             throws IOException {
@@ -25,10 +90,10 @@ public class Main {
     }
 
     public static void advisorListOfInstructor(String advisorCode) throws IOException {
-        File inctructorFile = new File("instructors.txt");
+        File instructorFile = new File("instructors.txt");
         File specificInstructor = new File("specificInstructor.txt");
 
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(inctructorFile));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(instructorFile));
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(specificInstructor));
 
         String line;
@@ -44,6 +109,7 @@ public class Main {
         bufferedReader.close();
         bufferedWriter.close();
     }
+
     public static void deleteStudent(Integer id) throws IOException {
         File studentFile = new File("students.txt");
         File tmpStudentFile = new File("tmpStudents.txt");
@@ -63,10 +129,8 @@ public class Main {
         bufferedReader.close();
         bufferedWriter.close();
 
-        if (!studentFile.delete())
-            System.out.println("Failed to delete the original file.");
-        if (!tmpStudentFile.renameTo(studentFile))
-            System.out.println("Failed to rename the temporary file.");
+        studentFile.delete();
+        tmpStudentFile.renameTo(studentFile);
     }
 
     public static void modifyStudent(Integer id, String attribute, String newValue) throws IOException {
@@ -119,6 +183,7 @@ public class Main {
                 }
                 break;
             }
+            randomAccessFile.close();
         }
     }
 }
